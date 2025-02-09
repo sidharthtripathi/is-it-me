@@ -22,7 +22,7 @@ model User{
 }
 
 model Thought{
-  id String @id
+  id String @id @default(uuid())
   thought String
   author User @relation(fields: [authorID],references: [username],onUpdate: Cascade, onDelete:Cascade)
   authorID String

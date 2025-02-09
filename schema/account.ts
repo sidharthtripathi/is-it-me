@@ -8,3 +8,7 @@ export const signupSchema = z.object({
     username : z.string().min(1,"Minimum 1 character reuqired"),
     password : z.string().min(8,"Password must be 8 characters long")
 })
+
+export type AccessTokenType = {
+    username : string
+}
