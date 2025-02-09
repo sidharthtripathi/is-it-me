@@ -14,8 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import {signupSchema} from '@/schema/account'
 import {z} from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod';
-import { account } from '@/services/appwrite-client';
-import { AppwriteException } from 'appwrite';
+import { server } from '@/lib/axios';
+import { AxiosError } from 'axios';
+
 
 type TSignupSchema = z.infer<typeof signupSchema>
 export function SignupForm() {
@@ -23,11 +24,11 @@ export function SignupForm() {
   const {register,handleSubmit,formState:{errors,isSubmitting},reset} = useForm<TSignupSchema>({resolver : zodResolver(signupSchema)})
   async function onSubmit({username,password} : TSignupSchema){
     try {
-      await account.create(username,username.concat("@gmail.com"),password)
+      await server.post('/api/auth/signup',{username,password})
       reset()
       toast({title : "Account Created",description: "You can now login into  your account"})
     } catch (error) {
-      if(error instanceof AppwriteException) toast({title : error.message,variant : 'destructive'})
+      if(error instanceof AxiosError) toast({title : error.response?.statusText,variant : 'destructive'})
     }
   }
   return (

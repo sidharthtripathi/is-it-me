@@ -14,9 +14,11 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@/schema/account';
-import { account } from '@/services/appwrite-client';
+
 import { z } from 'zod';
-import { AppwriteException } from 'appwrite';
+import { server } from '@/lib/axios';
+import { AxiosError } from 'axios';
+
 
 type TLoginSchema = z.infer<typeof loginSchema>;
 
@@ -30,11 +32,11 @@ export function LoginForm() {
   const router = useRouter();
   async function onSubmit({username,password}: TLoginSchema) {
     try {
-      await account.createEmailPasswordSession(username.concat("@gmail.com"),password)
+      await server.post("/api/auth/login",{username,password})
       router.push('/')
     } catch (error) {
-      if(error instanceof AppwriteException)
-      toast({title : error.message,variant:"destructive"})
+      if(error instanceof AxiosError)
+      toast({title : error.response?.statusText,variant:"destructive"})
     }
   }
   return (
