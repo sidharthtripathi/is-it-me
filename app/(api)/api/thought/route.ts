@@ -11,7 +11,8 @@ export async function POST(req: NextRequest) {
         const newThought = await db.thought.create({
             data : {thought,authorID:username}
         })
-        await searchClient.index("thoughts").addDocuments([newThought])
+        console.log(newThought)
+        await searchClient.index("thoughts").addDocuments([newThought],{primaryKey : "id"})
         return NextResponse.json({message : "created"},{status : 201})
     } catch (error) {
         console.log(error)
