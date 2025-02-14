@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
         const newThought = await db.thought.create({
             data : {thought,authorID:username}
         })
-        console.log(newThought)
         await searchClient.index("thoughts").addDocuments([newThought],{primaryKey : "id"})
         return NextResponse.json({message : "created"},{status : 201})
     } catch (error) {
@@ -19,4 +18,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({},{statusText:"invalid payload",status: 400})
     }
     
+}
+
+export async function GET(req : NextRequest) {
+    const thought = req.nextUrl.searchParams.get("query")
+    const results = (await searchClient.index("thoughts").search(thought,{attributesToRetrieve : ["id","thought"]}))
+    return NextResponse.json(results.hits)
 }
