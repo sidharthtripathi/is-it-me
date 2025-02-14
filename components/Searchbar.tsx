@@ -13,7 +13,6 @@ export function Searchbar({setResults} : SearchbarProps){
     const {register,handleSubmit} = useForm<Query>()
     async function handleSearch(payload : Query ){
         const {data} = await server.get(`/api/thought?query=${payload.query}`)
-        console.log(data)
         setResults(data)
     }
     
